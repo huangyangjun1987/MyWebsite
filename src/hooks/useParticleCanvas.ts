@@ -63,6 +63,7 @@ export function useParticleCanvas(
     }
 
     function getSize() {
+      if (!canvas) return { width: 0, height: 0 }
       const parent = canvas.parentElement
       if (!parent) return { width: 0, height: 0 }
       return { width: parent.clientWidth, height: parent.clientHeight }

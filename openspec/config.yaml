@@ -1,24 +1,49 @@
 schema: spec-driven
 
 context: |
-  项目：个人品牌站（Personal Website）
-  技术栈：React 19 + Vite 7 + TypeScript + Tailwind CSS v4
-  部署：GitHub Pages，base path 为 /my-website/
+  项目：个人品牌站 → 全栈 AI 学习平台（渐进扩展中）
+  技术栈：
+    - 前端：React 19 + Vite 7 + TypeScript + Tailwind CSS v4
+    - 后端（即将添加）：FastAPI + SQLite
+  样式方案：
+    - Tailwind CSS v4，CSS-first 配置（无 tailwind.config.js）
+    - 暗色模式：@custom-variant dark，class-based 切换，ThemeProvider Context + localStorage 持久化
+    - 全部使用 Tailwind 工具类，禁止内联 style
+    - 强调色系：indigo/cyan，支持 backdrop blur、gradient、transition 动画
+  路由：
+    - 当前无路由库，单页 hash 锚点平滑滚动（#hero / #projects / #contact）
+    - 所有 section 内联渲染在 App.tsx 的 <main> 中
+    - Navbar 通过 document.querySelector + scrollIntoView 实现导航
+  部署：
+    - 前后端统一 GitHub Pages，base path 为 /my-website/
+    - 前端：gh-pages -d dist
   设计风格：科技感，动态粒子风，支持亮/暗切换
   性能：首屏加载 < 2 秒，所有图片使用 lazy loading
+  约束：
+    - 复用已有组件（ThemeProvider、Navbar、HeroSection 等），不推倒重来
+    - 新增后端不影响前端构建流程
+    - 所有组件使用 TypeScript + 函数式组件
 
 rules:
   proposal:
-    - 必须明确写出 out-of-scope（不做什么）
+    - 必须显式列出不做的事项（out-of-scope / NOT doing 清单）
     - 必须评估对现有功能的影响
+    - 高风险变更（涉及数据迁移、路由重构、部署方式变更）必须包含回滚方案
   specs:
-    - 使用 Given/When/Then 格式描述交互行为
-    - 每个 spec 必须包含至少一个边界/异常场景
+    - 所有 API 行为使用 Given/When/Then 格式描述
+    - 每个 spec 必须包含至少一个错误场景
+    - 每个 requirement 的 scenario 不超过 5 个
+    - 单个 spec 文件不超过 2000 词
+    - 省略理由说明，除非该理由直接影响实现决策
+    - 使用 RFC 2119 关键词（SHALL / SHOULD / MAY）表达需求级别
+  design:
+    - 包含组件层级图（Component Hierarchy）
+    - 文档化所有 API 端点规范（method、path、request/response schema、error codes）
   tasks:
-    - 每个任务粒度不超过 30 分钟
-    - tasks.md中如果任务完成了请标记完成状态
-    - tasks.md中如果任务完成了请标记完成状态
-    - 按 Phase 分组，每个 Phase 结束后等待我确认
+    - 单个 task 不超过 2 小时工作量
+    - 相关 task 按 Phase 分组
+    - 每个 Phase 结束后包含验证步骤（checklist / 测试命令）
+    - 新建服务或模块前，必须先检查是否有可复用的已有服务或组件
 
 languages: |
   Generate all artifacts in Simplified Chinese.

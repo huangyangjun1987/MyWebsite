@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: studypal-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///./studypal.db
+      - key: CORS_ORIGINS
+        value: http://localhost:5173,https://huangyangjun1987.github.io
+      - key: AUTH_ENABLED
+        value: "true"
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: DEEPSEEK_BASE_URL
+        value: https://api.deepseek.com

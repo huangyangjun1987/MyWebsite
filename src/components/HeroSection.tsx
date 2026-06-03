@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { ParticleCanvas } from './ParticleCanvas'
 
 interface HeroSectionProps {
@@ -7,6 +8,7 @@ interface HeroSectionProps {
   ctaText?: string
   projectsHref?: string
   id?: string
+  children?: ReactNode
 }
 
 export function HeroSection({
@@ -16,6 +18,7 @@ export function HeroSection({
   ctaText = '了解更多',
   projectsHref = '#projects',
   id,
+  children,
 }: HeroSectionProps) {
   function handleCtaClick() {
     document.querySelector(projectsHref)?.scrollIntoView({ behavior: 'smooth' })
@@ -28,7 +31,7 @@ export function HeroSection({
         bg-gradient-to-b from-slate-50 via-blue-50 to-indigo-100
         dark:from-gray-950 dark:via-slate-900 dark:to-blue-950"
     >
-      <ParticleCanvas />
+      {children ?? <ParticleCanvas />}
 
       <div className="relative z-10 text-center px-4 py-16">
         <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-gray-900 dark:text-white mb-4">

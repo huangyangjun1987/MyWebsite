@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router'
 import { ThemeToggle } from './ThemeToggle'
+import { useAuth } from '../contexts/AuthContext'
 
 const NAV_LINKS = [
   { label: '首页', href: '#hero' },
@@ -9,10 +11,11 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const { isAuthenticated, isLoading } = useAuth()
 
   useEffect(() => {
     function handleScroll() {
-      setScrolled(prev => window.scrollY > 50 ? true : window.scrollY < 10 ? false : prev)
+      setScrolled((prev) => window.scrollY > 50 ? true : window.scrollY < 10 ? false : prev)
     }
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
@@ -52,6 +55,31 @@ export function Navbar() {
                 </a>
               </li>
             ))}
+            <li>
+              {!isLoading && (
+                isAuthenticated ? (
+                  <Link
+                    to="/dashboard"
+                    className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-cyan-400
+                               transition-colors duration-200
+                               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+                               dark:focus-visible:ring-cyan-400 rounded"
+                  >
+                    进入 Dashboard
+                  </Link>
+                ) : (
+                  <Link
+                    to="/login"
+                    className="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-cyan-400
+                               transition-colors duration-200
+                               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500
+                               dark:focus-visible:ring-cyan-400 rounded"
+                  >
+                    登录
+                  </Link>
+                )
+              )}
+            </li>
           </ul>
           <ThemeToggle />
         </div>

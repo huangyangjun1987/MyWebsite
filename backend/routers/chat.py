@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from openai import OpenAI
 from database import get_db
 from schemas.chat import ChatSendRequest
 from services.chat import save_message, get_history, build_system_prompt
@@ -14,7 +13,11 @@ router = APIRouter(prefix="/api/chat", tags=["chat"])
 CONTEXT_WINDOW = 20
 
 
-def _get_client() -> OpenAI:
+def _get_client():
+    try:
+        from openai import OpenAI
+    except ImportError:
+        raise HTTPException(status_code=502, detail="AI 服务暂时不可用")
     return OpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_BASE_URL, timeout=60)
 
 

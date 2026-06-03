@@ -1,13 +1,24 @@
+import traceback
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base, SessionLocal
 from config import CORS_ORIGINS
-from routers.auth import router as auth_router
-from routers.chat import router as chat_router
-from routers.analytics import router as analytics_router
-from models.learning import Achievement
 
-app = FastAPI(title="StudyPal API", version="0.1.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    try:
+        Base.metadata.create_all(bind=engine)
+        _seed_achievements()
+    except Exception:
+        traceback.print_exc()
+    yield
+    # Shutdown
+
+
+app = FastAPI(title="StudyPal API", version="0.1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,13 +29,13 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
-def on_startup():
-    Base.metadata.create_all(bind=engine)
-    _seed_achievements()
-
-
 def _seed_achievements():
+    try:
+        from models.learning import Achievement
+    except Exception:
+        traceback.print_exc()
+        return
+
     db = SessionLocal()
     try:
         existing = db.query(Achievement).count()
@@ -40,15 +51,37 @@ def _seed_achievements():
         ]
         db.add_all(defaults)
         db.commit()
+    except Exception:
+        traceback.print_exc()
     finally:
         db.close()
 
 
-app.include_router(auth_router)
-app.include_router(chat_router)
-app.include_router(analytics_router)
+# Lazy-load routers so import errors in one don't break others
+try:
+    from routers.auth import router as auth_router
+    app.include_router(auth_router)
+except Exception:
+    traceback.print_exc()
+
+try:
+    from routers.analytics import router as analytics_router
+    app.include_router(analytics_router)
+except Exception:
+    traceback.print_exc()
+
+try:
+    from routers.chat import router as chat_router
+    app.include_router(chat_router)
+except Exception:
+    traceback.print_exc()
 
 
 @app.get("/")
 def root():
     return {"message": "StudyPal API is running"}
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}

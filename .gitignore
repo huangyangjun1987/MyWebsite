@@ -27,5 +27,12 @@ dist-ssr
 .env
 backend/.env
 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.db-shm
+*.db-wal
+
 # Database
 *.db
